@@ -21,12 +21,12 @@ Clone or copy this repository into your global Antigravity skills directory:
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/<your-username>/antigravity-spawn-session.git "$env:USERPROFILE\.gemini\config\skills\spawn-session"
+git clone https://github.com/aihehye/antigravity-spawn-session.git "$env:USERPROFILE\.gemini\config\skills\spawn-session"
 ```
 
 **macOS / Linux:**
 ```bash
-git clone https://github.com/<your-username>/antigravity-spawn-session.git ~/.gemini/config/skills/spawn-session
+git clone https://github.com/aihehye/antigravity-spawn-session.git ~/.gemini/config/skills/spawn-session
 ```
 
 ### Option 2: Project-level installation
@@ -34,7 +34,7 @@ git clone https://github.com/<your-username>/antigravity-spawn-session.git ~/.ge
 Clone into your repository's local skill folder:
 
 ```bash
-git clone https://github.com/<your-username>/antigravity-spawn-session.git .agents/skills/spawn-session
+git clone https://github.com/aihehye/antigravity-spawn-session.git .agents/skills/spawn-session
 ```
 
 ---

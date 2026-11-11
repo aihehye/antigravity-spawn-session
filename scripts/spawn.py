@@ -14,26 +14,53 @@ import urllib.request
 
 
 def find_agentapi_exe():
+    # 1. Environment variable injected by Antigravity
     exe = os.environ.get("ANTIGRAVITY_AGENTAPI_EXE")
     if exe and os.path.exists(exe):
         return exe
 
+    # 2. Check running language_server process
+    if sys.platform == "win32":
+        try:
+            cmd = ["powershell", "-NoProfile", "-Command", "(Get-Process language_server -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path -First 1)"]
+            proc_out = subprocess.check_output(cmd, text=True, timeout=3).strip()
+            if proc_out and os.path.exists(proc_out):
+                return proc_out
+        except Exception:
+            pass
+
+    # 3. Standard installation paths
+    if sys.platform == "win32":
+        candidates = [
+            os.path.expandvars(r"%LOCALAPPDATA%\Programs\antigravity\resources\bin\language_server.exe"),
+            r"C:\Program Files\Antigravity\resources\bin\language_server.exe",
+            r"C:\Program Files (x86)\Antigravity\resources\bin\language_server.exe"
+        ]
+        for c in candidates:
+            if os.path.exists(c):
+                return c
+    elif sys.platform == "darwin":
+        candidates = [
+            "/Applications/Antigravity.app/Contents/Resources/bin/language_server",
+            os.path.expanduser("~/Applications/Antigravity.app/Contents/Resources/bin/language_server")
+        ]
+        for c in candidates:
+            if os.path.exists(c):
+                return c
+    elif sys.platform.startswith("linux"):
+        candidates = [
+            os.path.expanduser("~/.local/share/antigravity/bin/language_server"),
+            "/opt/antigravity/bin/language_server",
+            "/usr/share/antigravity/bin/language_server"
+        ]
+        for c in candidates:
+            if os.path.exists(c):
+                return c
+
+    # 4. PATH lookup
     which_exe = shutil.which("language_server.exe" if sys.platform == "win32" else "language_server")
     if which_exe:
         return which_exe
-
-    if sys.platform == "win32":
-        local_app = os.path.expandvars(r"%LOCALAPPDATA%\Programs\antigravity\resources\bin\language_server.exe")
-        if os.path.exists(local_app):
-            return local_app
-    elif sys.platform == "darwin":
-        mac_app = "/Applications/Antigravity.app/Contents/Resources/bin/language_server"
-        if os.path.exists(mac_app):
-            return mac_app
-    elif sys.platform.startswith("linux"):
-        linux_app = os.path.expanduser("~/.local/share/antigravity/bin/language_server")
-        if os.path.exists(linux_app):
-            return linux_app
 
     return None
 
@@ -64,7 +91,7 @@ def spawn_via_rpc(title, model, full_prompt):
             data = json.loads(resp.read().decode("utf-8"))
             return json.dumps({"response": {"newConversation": {"conversationId": data.get("cascadeId"), "title": title}}}, indent=2)
     except Exception as e:
-        sys.stderr.write(f"RPC call failed: {e}\n")
+        sys.stderr.write(f"Connect-RPC fallback call failed: {e}\n")
         return None
 
 
