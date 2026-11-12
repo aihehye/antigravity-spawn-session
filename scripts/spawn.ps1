@@ -66,6 +66,7 @@ if ($lsAddress -and $csrfToken) {
     $body = @{
         initialPrompt = $fullPrompt
         workspaceUris = @()
+        source = "CORTEX_TRAJECTORY_SOURCE_AGENT_API"
     } | ConvertTo-Json -Compress
 
     $headers = @{

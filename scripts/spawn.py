@@ -74,7 +74,8 @@ def spawn_via_rpc(title, model, full_prompt):
     url = f"http://{ls_address}/exa.language_server_pb.LanguageServerService/StartCascade"
     payload = {
         "initialPrompt": full_prompt,
-        "workspaceUris": []
+        "workspaceUris": [],
+        "source": "CORTEX_TRAJECTORY_SOURCE_AGENT_API"
     }
 
     req = urllib.request.Request(
